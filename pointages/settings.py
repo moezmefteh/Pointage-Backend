@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
 
 ]
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

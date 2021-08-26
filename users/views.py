@@ -92,7 +92,7 @@ def employes_list(request):
             cordonnes = User.objects.all()
             cordonnes_serializer =UserSerializer(cordonnes, many=True)
             return Response(cordonnes_serializer.data)
-        # #  POST a new employe,
+        #  POST a new employe,
         # elif request.method == 'POST':
         #     data = JSONParser().parse(request)
         #     tutorial_serializer =UserSerializer(data=data)
@@ -101,45 +101,38 @@ def employes_list(request):
         #         return Response( status=status.HTTP_201_CREATED) 
         #     else:
         #         return Response(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # DELETE all employes
-        elif request.method == 'DELETE':
-            count = User.objects.all().delete()
-            return Response({'message': '{} employes were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+        # # DELETE all employes
+        # elif request.method == 'DELETE':
+        #     count = User.objects.all().delete()
+        #     return Response({'message': '{} employes were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 
 
-class EmployeDetail(APIView):
 
-    def get(self,username):
-
-        try:
-            return User.objects.get(pk=username)
-        except User.DoesNotExist:
-            return Response({'message': 'The employe does not exist'}, status=status.HTTP_404_NOT_FOUND) 
-    # @api_view(['GET', 'PUT', 'DELETE'])
-    # def detail(request, pk):
-    #     # find employe by pk (id)
-    #     try: 
-    #             employe_pk = User.objects.get(pk=pk) 
-    #     except User.DoesNotExist: 
-    #             return Response({'message': 'The employe does not exist'}, status=status.HTTP_404_NOT_FOUND) 
-    #     if request.method == 'GET': 
-    #         employes_serializer = UserSerializer(employe_pk) 
-    #         return Response(employes_serializer.data) 
+@api_view(['GET', 'PUT', 'DELETE'])
+def EmployeDetail(request,username):
+        # find employe by pk (id)
+        try: 
+                user = User.objects.get(username=username) 
+        except User.DoesNotExist: 
+                return Response({'message': 'The employe does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+        if request.method == 'GET': 
+            employes_serializer = UserSerializer(user) 
+            return Response(employes_serializer.data) 
         
-    #     # put a employe
-    #     elif request.method == 'PUT': 
-    #         data = JSONParser().parse(request) 
-    #         employes_serializer = UserSerializer(employe_pk, data=data) 
-    #         if employes_serializer.is_valid(): 
-    #             employes_serializer.save() 
-    #             return Response( status=status.HTTP_201_CREATED) 
-    #         return Response(employes_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+        # put a employe
+        elif request.method == 'PUT': 
+            data = JSONParser().parse(request) 
+            employes_serializer = UserSerializer(user, data=data) 
+            if employes_serializer.is_valid(): 
+                employes_serializer.save() 
+                return Response( status=status.HTTP_201_CREATED) 
+            return Response(employes_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
             
-    #     # delete an employe by pk
-    #     elif request.method == 'DELETE': 
-    #         employe_pk.delete() 
-    #         return Response({'message': 'employe was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        # delete an employe by pk
+        elif request.method == 'DELETE': 
+            user.delete() 
+            return Response({'message': 'employe was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
 
@@ -165,20 +158,20 @@ def salaires(request):
 
 
 @api_view(['GET','PUT','DELETE'])
-def employes_salaire(request, pk):
+def employes_salaire(request,user):
     # find salaire by pk (id)
     try: 
-            salaire_pk = salaire.objects.get(pk=pk) 
+            salaire_user = salaire.objects.get(user=user) 
     except salaire.DoesNotExist: 
               return Response({'message': 'The salary does not exist'}, status=status.HTTP_404_NOT_FOUND) 
     if request.method == 'GET': 
-        salaire_serializer = salaireSerializer(salaire_pk) 
+        salaire_serializer = salaireSerializer(salaire_user) 
         return Response(salaire_serializer.data) 
     
     # put a salaire
     elif request.method == 'PUT': 
         data = JSONParser().parse(request) 
-        salaire_serializer = salaireSerializer(salaire_pk, data=data) 
+        salaire_serializer = salaireSerializer(salaire_user, data=data) 
         if salaire_serializer.is_valid(): 
             salaire_serializer.save() 
             return Response( status=status.HTTP_201_CREATED) 
@@ -186,7 +179,7 @@ def employes_salaire(request, pk):
         
     # delete a employe by pk
     elif request.method == 'DELETE': 
-        salaire_pk.delete() 
+        salaire_user.delete() 
         return Response({'message': 'salaire was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -214,20 +207,20 @@ def pointages(request):
 
 
 @api_view(['GET','PUT','DELETE'])
-def employes_pointage(request, pk):
+def employes_pointage(request, user):
     # find pointage by pk (id)
     try: 
-            pointage_pk = pointage.objects.get(pk=pk) 
+            pointage_user = pointage.objects.get(user=user) 
     except pointage.DoesNotExist: 
               return Response({'message': 'The pointage does not exist'}, status=status.HTTP_404_NOT_FOUND) 
     if request.method == 'GET': 
-        pointage_serializer = pointageSerializer(pointage_pk) 
+        pointage_serializer = pointageSerializer(pointage_user) 
         return Response(pointage_serializer.data) 
     
     # put a pointage
     elif request.method == 'PUT': 
         data = JSONParser().parse(request) 
-        pointage_serializer = pointageSerializer(pointage_pk, data=data) 
+        pointage_serializer = pointageSerializer(pointage_user, data=data) 
         if pointage_serializer.is_valid(): 
             pointage_serializer.save() 
             return Response( status=status.HTTP_201_CREATED) 
@@ -235,7 +228,7 @@ def employes_pointage(request, pk):
         
     # delete a pointage by pk
     elif request.method == 'DELETE': 
-        pointage_pk.delete() 
+        pointage_user.delete() 
         return Response({'message': 'pointage was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -262,20 +255,20 @@ def missions(request):
             return Response({'message': '{} missions were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def mission_detail(request, pk):
+def mission_detail(request,user):
     # find mission by pk (id)
     try: 
-            mission_pk = mission.objects.get(pk=pk) 
+            mission_user = mission.objects.get(user=user) 
     except mission.DoesNotExist: 
               return Response({'message': 'The mission does not exist'}, status=status.HTTP_404_NOT_FOUND) 
     if request.method == 'GET': 
-        missions_serializer = missionsSerializer(mission_pk) 
+        missions_serializer = missionsSerializer(mission_user) 
         return Response(missions_serializer.data) 
     
     # put a mission
     elif request.method == 'PUT': 
         data = JSONParser().parse(request) 
-        missions_serializer = missionsSerializer(mission_pk, data=data) 
+        missions_serializer = missionsSerializer(mission_user, data=data) 
         if missions_serializer.is_valid(): 
             missions_serializer.save() 
             return Response( status=status.HTTP_201_CREATED) 
@@ -283,7 +276,7 @@ def mission_detail(request, pk):
         
     # delete a mission by pk
     elif request.method == 'DELETE': 
-        mission_pk.delete() 
+        mission_user.delete() 
         return Response({'message': 'mission was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
