@@ -1,12 +1,16 @@
 from users import views
 from django.conf.urls import url 
 from django.urls import path
-from .views import RegisterView, LoginView, UserView, LogoutView, EmployeDetail
+from .views import RegisterView, LoginView, UserView, LogoutView
 
 urlpatterns = [
+    path('register', RegisterView.as_view()),
+    path('login', LoginView.as_view()),
+    path('user', UserView.as_view()),
+    path('logout', LogoutView.as_view()),
 
     url(r'^list/$', views.employes_list),
-    url(r'(?P<username>\w{0,50})/$', views.EmployeDetail),
+    #url(r'^(?P<username>\w{0,50})/$', views.employe_detail),
     
     url(r'^salaire/list/$', views.salaires),
     url(r'^salaire/(?P<user>\w{0,50})/$', views.employes_salaire),
@@ -20,9 +24,6 @@ urlpatterns = [
     url(r'^mission/(?P<pk>\d+)/terminer/$', views.terminer_mission),
 
 
-    path('register', RegisterView.as_view()),
-    path('login', LoginView.as_view()),
-    path('user', UserView.as_view()),
-    path('logout', LogoutView.as_view()),
+
 
 ]

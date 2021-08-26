@@ -41,7 +41,7 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow()
         }
 
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -65,13 +65,14 @@ class UserView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         try:
-            payload = jwt.decode(token,SECRET_KEY, algorithm=['HS256'])
+            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!!')
+            raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-        return Response({'status':200,'payload':serializer.data})
+        # user = User.objects.filter(id=payload['username']).first()
+        user = User.objects.get(username=payload['username']) 
+        employes_serializer = UserSerializer(user) 
+        return Response(employes_serializer.data) 
 
 
 class LogoutView(APIView):
@@ -110,7 +111,7 @@ def employes_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def EmployeDetail(request,username):
+def employe_detail(request,username):
         # find employe by pk (id)
         try: 
                 user = User.objects.get(username=username) 
@@ -281,9 +282,9 @@ def mission_detail(request,user):
 
 
 @api_view(['PUT'])
-def demarrer_mission(request, pk):    
+def demarrer_mission(pk):    
     mission_pk = mission.objects.get(pk=pk) 
-    data = mission.objects.update(état="en exécution") 
+    data = mission_pk.objects.update(état="en exécution") 
     missions_serializer = missionsSerializer(mission_pk, data=data) 
     if missions_serializer.is_valid(): 
         missions_serializer.save() 
