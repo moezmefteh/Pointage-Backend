@@ -19,7 +19,11 @@ class RegisterView(APIView):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        response = Response()
+        response.data = {
+            'message': 'success'
+        }
+        return response
 
 
 class LoginView(APIView):
