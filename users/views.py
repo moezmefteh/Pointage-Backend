@@ -45,7 +45,8 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -67,11 +68,10 @@ class UserView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
+            raise AuthenticationFailed('Unauthenticated!!')
 
-        # user = User.objects.filter(id=payload['username']).first()
         user = User.objects.get(username=payload['id']) 
         employes_serializer = UserSerializer(user) 
         return Response(employes_serializer.data) 
@@ -285,8 +285,16 @@ def mission_detail(request,user):
 
 @api_view(['PUT'])
 def demarrer_mission(pk):    
-    mission_pk = mission.objects.filter(pk=pk) 
-    data = mission_pk.update(état="en exécution") 
+    mission_pk = mission.objects.get(pk=pk) 
+    missions_serializer = missionsSerializer(mission_pk) 
+    missions_serializer = mission_pk.update(état="en exécution") 
+    missions_serializer.save() 
+    return Response(status=status.HTTP_201_CREATED) 
+
+@api_view(['PUT'])
+def terminer_mission(pk):    
+    mission_pk = mission.objects.get(pk=pk) 
+    data = mission.objects.update(état="terminé") 
     missions_serializer = missionsSerializer(mission_pk, data=data) 
     if missions_serializer.is_valid(): 
         missions_serializer.save() 
@@ -294,9 +302,9 @@ def demarrer_mission(pk):
     return Response(missions_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 @api_view(['PUT'])
-def terminer_mission(request, pk):    
+def annuler_mission(pk):    
     mission_pk = mission.objects.get(pk=pk) 
-    data = mission.objects.update(état="terminé") 
+    data = mission.objects.update(état="annulé") 
     missions_serializer = missionsSerializer(mission_pk, data=data) 
     if missions_serializer.is_valid(): 
         missions_serializer.save() 

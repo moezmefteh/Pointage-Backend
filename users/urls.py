@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'missions/(?P<user>\w{0,50})/$', views.mission_detail),
     url(r'^mission/(?P<pk>\d+)/demarrer/$', views.demarrer_mission),
     url(r'^mission/(?P<pk>\d+)/terminer/$', views.terminer_mission),
+    url(r'^mission/(?P<pk>\d+)/annuler/$', views.annuler_mission),
 
 
 
