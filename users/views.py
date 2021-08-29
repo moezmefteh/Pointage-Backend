@@ -45,11 +45,9 @@ class LoginView(APIView):
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
-        employes_serializer = UserSerializer(user) 
 
         response.data = {
-            'jwt': token,
-            'data':employes_serializer.data
+            'jwt': token
 
         }
 
@@ -70,7 +68,7 @@ class UserView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         # user = User.objects.filter(id=payload['username']).first()
-        user = User.objects.get(username=payload['username']) 
+        user = User.objects.get(username=payload['id']) 
         employes_serializer = UserSerializer(user) 
         return Response(employes_serializer.data) 
 
@@ -283,8 +281,8 @@ def mission_detail(request,user):
 
 @api_view(['PUT'])
 def demarrer_mission(pk):    
-    mission_pk = mission.objects.get(pk=pk) 
-    data = mission_pk.objects.update(état="en exécution") 
+    mission_pk = mission.objects.filter(pk=pk) 
+    data = mission_pk.update(état="en exécution") 
     missions_serializer = missionsSerializer(mission_pk, data=data) 
     if missions_serializer.is_valid(): 
         missions_serializer.save() 
