@@ -1,7 +1,6 @@
 from pointages.settings import SECRET_KEY
 from users.models import *
 from users.serializers import *
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
